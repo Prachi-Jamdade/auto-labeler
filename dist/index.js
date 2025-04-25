@@ -42812,6 +42812,8 @@ async function run() {
           .map((category) => labelMapping[category])
           .filter((label) => availableLabels.has(label));
 
+        console.log(labelsToApply);
+
         if (labelsToApply.length > 0) {
           const uniqueLabels = [...new Set(labelsToApply)];
 
