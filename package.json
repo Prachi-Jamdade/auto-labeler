@@ -1,0 +1,25 @@
+{
+    "name": "ai-labeler",
+    "version": "1.0.0",
+    "description": "GitHub Action to label issues and PRs using DeepSeek AI",
+    "main": "index.js",
+    "scripts": {
+      "build": "ncc build index.js -o dist"
+    },
+    "keywords": [
+      "github",
+      "action",
+      "labels",
+      "ai"
+    ],
+    "author": "Prachi Jamdade",
+    "license": "MIT",
+    "dependencies": {
+      "@actions/core": "^1.10.0",
+      "@actions/github": "^5.1.1",
+      "axios": "^1.6.7"
+    },
+    "devDependencies": {
+      "@vercel/ncc": "^0.38.3"
+    }
+  }

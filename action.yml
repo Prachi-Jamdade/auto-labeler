@@ -1,0 +1,27 @@
+name: 'Auto Issue and PR Labeler'
+description: 'Automatically label issues and PRs'
+author: 'Prachi Jamdade'
+
+inputs:
+  github-token:
+    description: 'GitHub token with repo permissions'
+    required: true
+  deepseek-api-key:
+    description: 'DeepSeek API authentication key'
+    required: true
+  label-mapping:
+    description: 'JSON mapping of categories to labels'
+    required: false
+    default: '{"bug": "bug", "feature": "enhancement", "documentation": "documentation", "question": "question"}'
+  max-issues:
+    description: 'Maximum number of issues to process per run'
+    required: false
+    default: '20'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+
+branding:
+  icon: 'tag'
+  color: 'blue'
