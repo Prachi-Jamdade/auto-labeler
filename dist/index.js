@@ -42875,7 +42875,7 @@ async function analyzeWithDeepSeek(content, apiKey) {
   `;
   
       const response = await axios.post(
-        "https://api.deepseek.com/openapi/v1/chat/completions",
+        "https://api.deepseek.com/openapi/v1",
         {
           model: "deepseek-reasoner",
           messages: [
