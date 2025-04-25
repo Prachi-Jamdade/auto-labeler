@@ -1,7 +1,8 @@
 node_modules/
 package-lock.json
 
-dist/
+dist/*
+!dist/index.js
 
 .vscode/
 
@@ -9,3 +10,4 @@ dist/
 
 .env
 
+*.log
