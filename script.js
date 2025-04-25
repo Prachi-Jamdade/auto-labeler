@@ -160,7 +160,7 @@ async function analyzeWithDeepSeek(content, apiKey) {
   `;
   
       const response = await axios.post(
-        "https://api.deepseek.com/openapi/v1",
+        "https://api.deepseek.com/v1",
         {
           model: "deepseek-reasoner",
           messages: [
