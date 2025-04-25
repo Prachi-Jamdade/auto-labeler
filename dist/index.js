@@ -42720,9 +42720,7 @@ const axios = __nccwpck_require__(9205);
 async function run() {
   try {
     const githubToken = core.getInput("github-token", { required: true });
-    const deepseekApiKey = core.getInput("deepseek-api-key", {
-      required: true,
-    });
+    const geminiApiKey = core.getInput("gemini-api-key", { required: true });
     const labelMappingString = core.getInput("label-mapping");
     const maxIssues = parseInt(core.getInput("max-issues"));
 
@@ -42752,7 +42750,6 @@ async function run() {
 
     core.info(`Found ${issuesResponse.data.length} open issues/PRs to process`);
 
-    // Create a list of available labels in the repository for validation
     const labelsResponse = await octokit.rest.issues.listLabelsForRepo({
       owner,
       repo,
@@ -42763,7 +42760,7 @@ async function run() {
     );
     core.info(`Repository has ${availableLabels.size} available labels`);
 
-    // Validate label mapping against available labels
+    // Validate label mapping
     for (const category in labelMapping) {
       const label = labelMapping[category];
       if (!availableLabels.has(label)) {
@@ -42786,20 +42783,17 @@ async function run() {
       core.info(`Processing ${type} #${issueNumber}: ${title}`);
       processedCount++;
 
-      // Skip if already labeled
       if (issue.labels && issue.labels.length > 0) {
         core.info(`${type} #${issueNumber} already has labels. Skipping.`);
         continue;
       }
 
-      // Prepare content for analysis
       const contentToAnalyze = `Title: ${title}\n\nDescription: ${body}`;
 
       try {
-        // Call DeepSeek API
-        const categories = await analyzeWithDeepSeek(
+        const categories = await analyzeWithGemini(
           contentToAnalyze,
-          deepseekApiKey
+          geminiApiKey
         );
 
         if (categories.length === 0) {
@@ -42810,41 +42804,34 @@ async function run() {
         }
 
         core.info(
-          `DeepSeek detected categories for ${type} #${issueNumber}: ${categories.join(
-            ", "
-          )}`
+          `Gemini detected categories for ${type} #${issueNumber}: ${categories.join(", ")}`
         );
 
-        // Apply labels based on categories
         const labelsToApply = categories
           .filter((category) => labelMapping[category])
           .map((category) => labelMapping[category])
           .filter((label) => availableLabels.has(label));
 
-          if (labelsToApply.length > 0) {
-            // Deduplicate labels
-            const uniqueLabels = [...new Set(labelsToApply)];
-            
-            await octokit.rest.issues.addLabels({
-              owner,
-              repo,
-              issue_number: issueNumber,
-              labels: uniqueLabels
-            });
-            
-            core.info(`Applied labels to ${type} #${issueNumber}: ${uniqueLabels.join(', ')}`);
-            labeledCount++;
-          } else {
-            core.info(`No matching labels found for ${type} #${issueNumber}`);
-          }
+        if (labelsToApply.length > 0) {
+          const uniqueLabels = [...new Set(labelsToApply)];
 
+          await octokit.rest.issues.addLabels({
+            owner,
+            repo,
+            issue_number: issueNumber,
+            labels: uniqueLabels,
+          });
 
+          core.info(`Applied labels to ${type} #${issueNumber}: ${uniqueLabels.join(", ")}`);
+          labeledCount++;
+        } else {
+          core.info(`No matching labels found for ${type} #${issueNumber}`);
+        }
       } catch (error) {
         core.warning(`Error processing ${type} #${issueNumber}: ${error.message}`);
       }
 
-      await new Promise(resolve => setTimeout(resolve, 500));
-
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     core.info(`Processing complete. Processed ${processedCount} items, applied labels to ${labeledCount} items.`);
@@ -42854,71 +42841,77 @@ async function run() {
   }
 }
 
+async function analyzeWithGemini(content, apiKey) {
+  try {
+    const maxContentLength = 4000;
+    const truncatedContent =
+      content.length > maxContentLength
+        ? content.substring(0, maxContentLength) + "... [truncated]"
+        : content;
 
-async function analyzeWithDeepSeek(content, apiKey) {
-    try {
-      const maxContentLength = 4000;
-      const truncatedContent =
-        content.length > maxContentLength
-          ? content.substring(0, maxContentLength) + "... [truncated]"
-          : content;
-  
-      const prompt = `
-  You are an intelligent assistant that classifies GitHub issues and pull requests into the following categories: "bug", "feature", "documentation", "question", "enhancement", "security", "performance".
-  
-  Given the following content, return a JSON array of category names (strings) that apply, sorted by relevance. Only include categories that are strongly relevant.
-  
-  Content:
-  ${truncatedContent}
-  
-  Respond with JSON only. Example: ["bug", "performance"]
-  `;
-  
-      const response = await axios.post(
-        "https://api.deepseek.com/v1",
-        {
-          model: "deepseek-reasoner",
-          messages: [
-            { role: "system", content: "You are a helpful assistant." },
-            { role: "user", content: prompt }
-          ],
-          temperature: 0.2,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
+    const prompt = `
+You are an intelligent assistant that classifies GitHub issues and pull requests into the following categories: "bug", "feature", "documentation", "question", "enhancement", "security", "performance".
+
+Given the following content, return a JSON array of category names (strings) that apply, sorted by relevance. Only include categories that are strongly relevant.
+
+Content:
+${truncatedContent}
+
+Respond with JSON only. Example: ["bug", "performance"]
+`;
+
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt,
+              },
+            ],
           },
-          timeout: 15000,
-        }
-      );
-  
-      const reply = response.data.choices[0].message.content.trim();
-  
-      let categories;
-      try {
-        categories = JSON.parse(reply);
-      } catch {
-        core.warning(`DeepSeek returned invalid JSON: ${reply}`);
-        return [];
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 15000,
       }
-  
-      if (!Array.isArray(categories)) {
-        core.warning(`DeepSeek returned non-array data: ${reply}`);
-        return [];
-      }
-  
-      return categories;
-    } catch (error) {
-      if (error.response) {
-        core.warning(`DeepSeek API error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
-      } else {
-        core.warning(`DeepSeek request failed: ${error.message}`);
-      }
+    );
+
+    const reply = response.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (!reply) {
+      core.warning("No response content from Gemini.");
       return [];
     }
+
+    let categories;
+    try {
+      categories = JSON.parse(reply);
+    } catch {
+      core.warning(`Gemini returned invalid JSON: ${reply}`);
+      return [];
+    }
+
+    if (!Array.isArray(categories)) {
+      core.warning(`Gemini returned non-array data: ${reply}`);
+      return [];
+    }
+
+    return categories;
+  } catch (error) {
+    if (error.response) {
+      core.warning(
+        `Gemini API error: ${error.response.status} - ${JSON.stringify(error.response.data)}`
+      );
+    } else {
+      core.warning(`Gemini request failed: ${error.message}`);
+    }
+    return [];
   }
-  
+}
 
 run();
 
