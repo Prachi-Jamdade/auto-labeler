@@ -6,8 +6,8 @@ inputs:
   github-token:
     description: 'GitHub token with repo permissions'
     required: true
-  deepseek-api-key:
-    description: 'DeepSeek API authentication key'
+  gemini-api-key:
+    description: 'Gemini API authentication key'
     required: true
   label-mapping:
     description: 'JSON mapping of categories to labels'

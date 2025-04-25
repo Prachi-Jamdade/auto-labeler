@@ -1,7 +1,7 @@
 {
     "name": "ai-labeler",
     "version": "1.0.0",
-    "description": "GitHub Action to label issues and PRs using DeepSeek AI",
+    "description": "GitHub Action to label issues and PRs",
     "main": "index.js",
     "scripts": {
       "build": "ncc build index.js -o dist"
