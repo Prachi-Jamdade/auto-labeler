@@ -42848,91 +42848,77 @@ async function run() {
     }
 
     core.info(`Processing complete. Processed ${processedCount} items, applied labels to ${labeledCount} items.`);
-    
+
   } catch (error) {
     core.setFailed(`Action failed with error: ${error}`);
   }
 }
 
-/**
- * Analyze content using the DeepSeek API
- * @param {string} content - The content to analyze
- * @param {string} apiKey - DeepSeek API key
- * @returns {Promise<string[]>} - Categories detected in the content
- */
+
 async function analyzeWithDeepSeek(content, apiKey) {
-  try {
-    // Truncate content if it's too long
-    const maxContentLength = 4000; // Adjust based on DeepSeek API limitations
-    const truncatedContent =
-      content.length > maxContentLength
-        ? content.substring(0, maxContentLength) + "... [truncated]"
-        : content;
-
-    core.debug(
-      `Sending content to DeepSeek API (${truncatedContent.length} chars)`
-    );
-
-    const response = await axios.post(
-      "https://api.deepseek.com/v1/analyze",
-      {
-        text: truncatedContent,
-        analysis_type: "categorization",
-        options: {
-          categories: [
-            "bug",
-            "feature",
-            "documentation",
-            "question",
-            "enhancement",
-            "security",
-            "performance",
+    try {
+      const maxContentLength = 4000;
+      const truncatedContent =
+        content.length > maxContentLength
+          ? content.substring(0, maxContentLength) + "... [truncated]"
+          : content;
+  
+      const prompt = `
+  You are an intelligent assistant that classifies GitHub issues and pull requests into the following categories: "bug", "feature", "documentation", "question", "enhancement", "security", "performance".
+  
+  Given the following content, return a JSON array of category names (strings) that apply, sorted by relevance. Only include categories that are strongly relevant.
+  
+  Content:
+  ${truncatedContent}
+  
+  Respond with JSON only. Example: ["bug", "performance"]
+  `;
+  
+      const response = await axios.post(
+        "https://api.deepseek.com/openapi/v1/chat/completions",
+        {
+          model: "deepseek-reasoner",
+          messages: [
+            { role: "system", content: "You are a helpful assistant." },
+            { role: "user", content: prompt }
           ],
+          temperature: 0.2,
         },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "User-Agent": "GitHub-Issue-Labeler-Action",
-        },
-        timeout: 10000, // 10 second timeout
-      }
-    );
-
-    // Extract categories with confidence above threshold
-    const confidenceThreshold = 0.7;
-    const detectedCategories = response.data.categories
-      .filter((cat) => cat.confidence >= confidenceThreshold)
-      .map((cat) => cat.name);
-
-    core.debug(
-      `DeepSeek API returned categories: ${JSON.stringify(
-        response.data.categories
-      )}`
-    );
-    core.info(
-      `Categories above threshold: ${detectedCategories.join(", ") || "None"}`
-    );
-
-    return detectedCategories;
-  } catch (error) {
-    if (error.response) {
-      core.warning(
-        `DeepSeek API error: ${error.response.status} - ${JSON.stringify(
-          error.response.data
-        )}`
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 15000,
+        }
       );
-    } else if (error.request) {
-      // The request was made but no response was received
-      core.warning(`DeepSeek API did not respond: ${error.message}`);
-    } else {
-      // Something happened in setting up the request
-      core.warning(`Error setting up DeepSeek API request: ${error.message}`);
+  
+      const reply = response.data.choices[0].message.content.trim();
+  
+      let categories;
+      try {
+        categories = JSON.parse(reply);
+      } catch {
+        core.warning(`DeepSeek returned invalid JSON: ${reply}`);
+        return [];
+      }
+  
+      if (!Array.isArray(categories)) {
+        core.warning(`DeepSeek returned non-array data: ${reply}`);
+        return [];
+      }
+  
+      return categories;
+    } catch (error) {
+      if (error.response) {
+        core.warning(`DeepSeek API error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
+      } else {
+        core.warning(`DeepSeek request failed: ${error.message}`);
+      }
+      return [];
     }
-    return [];
   }
-}
+  
 
 run();
 
