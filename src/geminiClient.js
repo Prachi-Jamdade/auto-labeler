@@ -1,3 +1,5 @@
+const core = require("@actions/core");
+
 async function analyzeContentWithGemini(content, apiKey) {
   try {
     const maxContentLength = 4000;
