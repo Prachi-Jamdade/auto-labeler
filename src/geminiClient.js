@@ -80,3 +80,5 @@ async function analyzeContentWithGemini(content, apiKey) {
     return [];
   }
 }
+
+module.exports = { analyzeContentWithGemini };
