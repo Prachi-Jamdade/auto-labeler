@@ -30,7 +30,7 @@ async function run() {
       const isPR = issue.pull_request !== undefined;
       const type = isPR ? "Pull Request" : "Issue";
 
-      core.info(`Processing ${type} #${issueNumber}: ${title}`);
+      core.info(`🚀 Processing ${type} #${issueNumber}: ${title}`);
       processedCount++;
 
       if (issue.labels && issue.labels.length > 0) {
@@ -50,7 +50,7 @@ async function run() {
 
       if (labelsToApply.length > 0) {
         await addLabels(octokit, owner, repo, issueNumber, labelsToApply);
-        core.info(`Applied labels: ${labelsToApply.join(", ")} to ${type} #${issueNumber}`);
+        core.info(`✅ Applied labels: ${labelsToApply.join(", ")} to ${type} #${issueNumber}`);
         labeledCount++;
       } else {
         core.info(`No matching labels found for ${type} #${issueNumber}`);
@@ -59,7 +59,7 @@ async function run() {
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
-    core.info(`Processing complete. Processed ${processedCount} items, labeled ${labeledCount} items.`);
+    core.info(`🔥 Processing complete. Processed ${processedCount} items, labeled ${labeledCount} items.`);
   } catch (error) {
     core.setFailed(`Action failed: ${error.message}`);
   }
