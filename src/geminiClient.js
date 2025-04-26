@@ -1,4 +1,4 @@
-async function analyzeWithGemini(content, apiKey) {
+async function analyzeContentWithGemini(content, apiKey) {
   try {
     const maxContentLength = 4000;
     const truncatedContent =
