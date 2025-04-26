@@ -4,7 +4,7 @@
     "description": "GitHub Action to label issues and PRs",
     "main": "index.js",
     "scripts": {
-      "build": "ncc build index.js -o dist"
+      "build": "ncc build src/index.js -o dist"
     },
     "keywords": [
       "github",
