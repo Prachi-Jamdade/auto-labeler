@@ -1,6 +1,10 @@
 Auto Issue and PR Labeler
 =========================
 
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/Prachi-Jamdade/auto-labeler/issues)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+
 A GitHub Action that automatically analyzes and labels issues and pull requests using Gemini AI. This action helps in repository management by categorizing/labeling incoming issues and PRs based on their content.
 
 Features
@@ -31,9 +35,9 @@ Setup
 
 ### Installation
 
-1.  Create a .github/workflows directory in your repository if it doesn't exist
+1.  Create a `.github/workflows` directory in your repository if it doesn't exist
     
-2.  Create a new workflow file (e.g., issue-labeler.yml) with the following content:
+2.  Create a new workflow file (e.g., `issue-labeler.yml`) with the following content:
     
 ```yaml
 name: Label Issues and PRs
@@ -67,7 +71,7 @@ jobs:
 
 ```
 
-1.  Add your Gemini API key as a secret in your repository:
+Add your Gemini API key as a secret in your repository:
     
     *   Go to your repository → `Settings` → `Secrets and variables` → `Actions`
         
@@ -77,7 +81,8 @@ jobs:
         
     *   Value: Your Gemini API key
 
-### Configuration Options
+Configuration Options
+------------
 
 | Input            | Description                                          | Required | Default |
 |------------------|------------------------------------------------------|:--------:|:-------:|
@@ -100,6 +105,22 @@ How It Works
     
 5.  The action applies the corresponding labels to the issue or PR
     
+Contributing
+-------
+
+Contributions are welcome! 🎉
+
+If you have ideas for improvements, bug fixes, or new features:
+
+1. Open an issue to discuss it
+
+2. Submit a pull request with your changes
+
+3. Please follow conventional commit style and add helpful commit messages
+
+4. Test your changes before submitting
+
+Let's make repository management even smoother together! 
 
 License
 -------
