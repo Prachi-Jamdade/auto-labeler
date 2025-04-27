@@ -4,6 +4,7 @@ Auto Issue and PR Labeler
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/Prachi-Jamdade/auto-labeler/issues)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+<img src="./assets/auto-labeler-banner.png" alt="Auto Issue and PR Labeler Banner" width="800"/>
 
 A GitHub Action that automatically analyzes and labels issues and pull requests using Gemini AI. This action helps in repository management by categorizing/labeling incoming issues and PRs based on their content.
 
@@ -73,13 +74,13 @@ jobs:
 
 Add your Gemini API key as a secret in your repository:
     
-    *   Go to your repository → `Settings` → `Secrets and variables` → `Actions`
+*   Go to your repository → `Settings` → `Secrets and variables` → `Actions`
         
-    *   Click on `New repository secret`
+*   Click on `New repository secret`
         
-    *   Name: `GEMINI_API_KEY`
+*   Name: `GEMINI_API_KEY`
         
-    *   Value: Your Gemini API key
+*   Value: Your Gemini API key
 
 Configuration Options
 ------------
