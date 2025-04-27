@@ -109,6 +109,16 @@ How It Works
     
 5.  The action applies the corresponding labels to the issue or PR
     
+Result
+-------
+
+Now, manually trigger the action to test it out and if everything goes right, you should see this:
+
+<div style="text-align: center;">
+  <img src="./assets/success-result.png" alt="Auto Issue and PR Labeler Banner" width="800"/>
+</div>
+
+
 Contributing
 -------
 
