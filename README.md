@@ -4,7 +4,9 @@ Auto Issue and PR Labeler
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)](https://github.com/Prachi-Jamdade/auto-labeler/issues)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-<img src="./assets/auto-labeler-banner.png" alt="Auto Issue and PR Labeler Banner" width="800"/>
+<div style="text-align: center;">
+  <img src="./assets/auto-labeler-banner.png" alt="Auto Issue and PR Labeler Banner" width="800"/>
+</div>
 
 A GitHub Action that automatically analyzes and labels issues and pull requests using Gemini AI. This action helps in repository management by categorizing/labeling incoming issues and PRs based on their content.
 
