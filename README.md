@@ -8,6 +8,7 @@ Auto Issue and PR Labeler
   <img src="./assets/auto-labeler-banner.png" alt="Auto Issue and PR Labeler Banner" width="800"/>
 </div>
 
+
 A GitHub Action that automatically analyzes and labels issues and pull requests using Gemini AI. This action helps in repository management by categorizing/labeling incoming issues and PRs based on their content.
 
 Features
