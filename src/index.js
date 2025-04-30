@@ -41,7 +41,7 @@ async function run() {
 
       const content = `Title: ${title}\n\nDescription: ${body}`;
       let categories = [];
-      if(geminiApiKey) {
+      if(!geminiApiKey) {
         categories = await analyzeContentWithGemini(content, geminiApiKey);
       } else if (openaiApiKey) {
         core.info(`Using OpenAI API ${openaiApiKey}`);
