@@ -6,8 +6,9 @@ const github = require("@actions/github");
 
 async function run() {
   try {
-    const githubToken = core.getInput("github-token", { required: true });
+    const githubToken = core.getInput("github-token", { required: true }); 
     const geminiApiKey = core.getInput("gemini-api-key", { required: true });
+    const openaiApiKey = core.getInput("openai-api-key", { required: true });
     const labelMappingString = core.getInput("label-mapping");
     const maxIssues = parseInt(core.getInput("max-issues"));
 
@@ -39,7 +40,12 @@ async function run() {
       }
 
       const content = `Title: ${title}\n\nDescription: ${body}`;
-      const categories = await analyzeContentWithGemini(content, geminiApiKey);
+      let categories = [];
+      if(geminiApiKey) {
+        categories = await analyzeContentWithGemini(content, geminiApiKey);
+      } else if (openaiApiKey) {
+        categories = await analyzeContentWithGemini(content, geminiApiKey);
+      }
 
       if (categories.length === 0) {
         core.info(`No categories detected for ${type} #${issueNumber}`);

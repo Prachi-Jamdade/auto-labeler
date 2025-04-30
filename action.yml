@@ -1,20 +1,27 @@
 name: 'Auto Issue and PR Labeler'
-description: 'Automatically label issues and PRs'
+description: 'Automatically label issues and PRs using Gemini or OpenAI'
 author: 'Prachi Jamdade'
 
 inputs:
   github-token:
     description: 'GitHub token with repo permissions'
     required: true
+
   gemini-api-key:
     description: 'Gemini API authentication key'
-    required: true
+    required: false
+
+  openai-api-key:
+    description: 'OpenAI API authentication key'
+    required: false
+
   label-mapping:
-    description: 'JSON mapping of categories to labels'
+    description: 'JSON mapping of categories to GitHub labels'
     required: false
     default: '{"bug": "bug", "feature": "enhancement", "documentation": "documentation", "question": "question"}'
+
   max-issues:
-    description: 'Maximum number of issues to process per run'
+    description: 'Maximum number of issues/PRs to process per run'
     required: false
     default: '20'
 

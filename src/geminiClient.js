@@ -48,7 +48,7 @@ async function analyzeContentWithGemini(content, apiKey) {
       return [];
     }
 
-    // ✨ NEW: Remove ```json or ``` if Gemini wraps response in markdown
+    // Remove ```json or ``` if Gemini wraps response in markdown
     if (reply.startsWith("```")) {
       reply = reply
         .replace(/```(json)?/gi, "")
