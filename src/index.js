@@ -7,8 +7,8 @@ const github = require("@actions/github");
 async function run() {
   try {
     const githubToken = core.getInput("github-token", { required: true }); 
-    const geminiApiKey = core.getInput("gemini-api-key", { required: true });
-    const openaiApiKey = core.getInput("openai-api-key", { required: true });
+    const geminiApiKey = core.getInput("gemini-api-key");
+    const openaiApiKey = core.getInput("openai-api-key");
     const labelMappingString = core.getInput("label-mapping");
     const maxIssues = parseInt(core.getInput("max-issues"));
 
