@@ -11,8 +11,7 @@ function parseLabelMapping(mappingString) {
 
 function filterLabelsToApply(categories, labelMapping, availableLabels) {
   const mappedLabels = categories
-    .filter((category) => labelMapping[category])
-    .map((category) => labelMapping[category])
+    .map((category) => labelMapping[category] || category) // fallback to category if no mapping
     .filter((label) => availableLabels.has(label));
 
   return [...new Set(mappedLabels)];
