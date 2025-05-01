@@ -13,6 +13,11 @@ async function run() {
     const maxIssues = parseInt(core.getInput("max-issues"));
 
     const labelMapping = parseLabelMapping(labelMappingString);
+    if(!geminiApiKey && !openaiApiKey) {
+      core.setFailed("❌ Either Gemini API key or OpenAI API key must be provided.");
+      return;
+    }
+
     const octokit = getOctokitClient(githubToken);
     const { owner, repo } = github.context.repo;
 
@@ -41,11 +46,11 @@ async function run() {
 
       const content = `Title: ${title}\n\nDescription: ${body}`;
       let categories = [];
-      if(!geminiApiKey) {
-        categories = await analyzeContentWithGemini(content, geminiApiKey);
+      if(geminiApiKey) {
+        categories = await analyzeContentWithGemini(content, availableLabels, geminiApiKey);
       } else if (openaiApiKey) {
         core.info(`Using OpenAI API ${openaiApiKey}`);
-        categories = await analyzeContentWithGemini(content, geminiApiKey);
+        categories = await analyzeContentWithGemini(content, availableLabels, openaiApiKey);
       }
 
       if (categories.length === 0) {

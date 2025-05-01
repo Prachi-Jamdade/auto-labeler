@@ -1,7 +1,7 @@
 const core = require("@actions/core");
 const axios = require("axios");
 
-async function analyzeContentWithGemini(content, apiKey) {
+async function analyzeContentWithGemini(content, availableLabels, apiKey) {
   try {
     const maxContentLength = 4000;
     const truncatedContent =
@@ -10,7 +10,7 @@ async function analyzeContentWithGemini(content, apiKey) {
         : content;
 
     const prompt = `
-  You are an intelligent assistant that classifies GitHub issues and pull requests into the following categories: "bug", "feature", "documentation", "question", "enhancement", "security", "performance".
+  You are an intelligent assistant that classifies GitHub issues and pull requests into the following categories: ${availableLabels}.
   
   Given the following content, return a JSON array of category names (strings) that apply, sorted by relevance. Only include categories that are strongly relevant.
   
